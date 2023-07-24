@@ -1,6 +1,15 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+function generateRandomString() {
+  const alphanumericCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString = '';
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * alphanumericCharacters.length);
+    randomString += alphanumericCharacters.charAt(randomIndex);
+  }
+  return randomString;
+}
 
 app.set("view engine", "ejs");
 
@@ -40,8 +49,20 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const longURL = req.body.longURL;
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls/${shortURL}`);
+});
+
+app.get("/u/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    res.status(404).send("Short URL not found.");
+  }
 });
 
 app.listen(PORT, () => {
