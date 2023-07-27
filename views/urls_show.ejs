@@ -1,32 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <title>URL - TinyApp Example</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
+  <title>TinyApp</title>
 </head>
 <body>
-  <%- include('partials/_header') %>
-  <div class="card text-center">
-    <div class="card-header"></div>
-    <div class="card-body">
-      <% if (deletedURL) { %>
-        <div class="alert alert-success" role="alert">
-          URL with ID <%= id %> has been successfully deleted!
+  <!-- Green banner -->
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-success">
+      <a class="navbar-brand" href="/urls">TinyApp</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href="/urls">My URLs</a>
+          <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
         </div>
-      <% } %>
-      <h5 class="card-title">TinyURL for: <%= longURL %></h5>
-      <p class="card-text">
-        Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
-      </p>
+      </div>
+    </nav>
+  </header>
+
+  <main style="margin: 1em;">
+    <div class="card text-center">
+      <div class="card-header"></div>
+      <div class="card-body">
+        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+        <p class="card-text">Short URL ID: <a href="/u/<%= id %>"><%= id %></a></p>
+
+        <!-- Form for updating long URL -->
+        <form method="POST" action="/urls/<%= id %>">
+          <div class="form-group">
+            <label for="longURL">New URL:</label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="longURL" name="longURL" value="<%= longURL %>" />
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+      <div class="card-footer text-muted"></div>
     </div>
-    <div class="card-footer text-muted">
-      <!-- Add delete button -->
-      <form method="POST" action="/urls/<%= id %>">
-        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-      </form>
-    </div>
-  </div>
+    <!-- ... -->
+  </main>
+
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

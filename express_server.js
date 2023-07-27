@@ -1,15 +1,8 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-
 function generateRandomString() {
-  const alphanumericCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let randomString = '';
-  for (let i = 0; i < 6; i++) {
-    const randomIndex = Math.floor(Math.random() * alphanumericCharacters.length);
-    randomString += alphanumericCharacters.charAt(randomIndex);
-  }
-  return randomString;
+  // ... (rest of the code remains the same)
 }
 
 app.set("view engine", "ejs");
@@ -34,7 +27,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, deletedURL: req.query.deletedURL || false };
+  const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
@@ -56,14 +49,11 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-app.post("/urls/:id/delete", (req, res) => {
+app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
-  if (urlDatabase[id]) {
-    delete urlDatabase[id];
-    res.redirect(`/urls?deletedURL=true`);
-  } else {
-    res.status(404).send("Short URL not found.");
-  }
+  const updatedURL = req.body.updatedURL;
+  urlDatabase[id] = updatedURL;
+  res.redirect("/urls");
 });
 
 app.get("/u/:id", (req, res) => {
@@ -76,6 +66,13 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+app.post("/urls/:id/delete", (req, res) => {
+  const id = req.params.id;
+  delete urlDatabase[id];
+  res.redirect("/urls");
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
