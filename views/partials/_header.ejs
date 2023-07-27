@@ -17,5 +17,8 @@
       </div>
       <button type="submit" class="btn btn-primary">Login</button>
     </form>
+    <% if (username) { %>
+      <span class="navbar-text">Logged in as: <%= username %></span>
+    <% } %>
   </nav>
 </header>
