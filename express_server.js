@@ -1,7 +1,7 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 8080; // default port 8080
-const cookieParser = require("cookie-parser"); // Import cookie-parser module
 
 function generateRandomString() {
   let result = "";
@@ -14,47 +14,28 @@ function generateRandomString() {
 }
 
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); // Add the cookie-parser middleware
-
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 app.get("/urls", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
+    username: req.cookies["username"],
     urls: urlDatabase,
-    username: req.cookies.username // Access the username from cookies
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { 
-    username: req.cookies.username // Access the username from cookies
-  };
-  res.render("urls_new", templateVars);
-});
-
-app.get("/urls/:id", (req, res) => {
-  const id = req.params.id;
-  const longURL = urlDatabase[id];
-  const templateVars = { id, longURL };
-  res.render("urls_show", templateVars);
+  res.render("urls_new");
 });
 
 app.post("/urls", (req, res) => {
@@ -64,9 +45,16 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+app.get("/urls/:id", (req, res) => {
+  const id = req.params.id;
+  const longURL = urlDatabase[id];
+  const templateVars = { id, longURL };
+  res.render("urls_show", templateVars);
+});
+
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
-  const updatedURL = req.body.updatedURL;
+  const updatedURL = req.body.longURL;
   urlDatabase[id] = updatedURL;
   res.redirect("/urls");
 });
@@ -90,6 +78,11 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const { username } = req.body;
   res.cookie("username", username);
+  res.redirect("/urls");
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
   res.redirect("/urls");
 });
 
