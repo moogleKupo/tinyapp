@@ -5,40 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
-  <title>TinyApp</title>
+  <title>Register - TinyApp</title>
 </head>
 <body>
-  <!-- Include the _header.ejs partial -->
-  <%- include('partials/_header') %>
+  <% include('partials/_header', { username: username }) %>
 
   <main style="margin: 1em;">
-    <h3>My URLs</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Short URL ID</th>
-          <th scope="col">Long URL</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for (let id in urls) { %>
-          <tr>
-            <td><%= id %></td>
-            <td><a href="<%= urls[id] %>"><%= urls[id] %></a></td>
-            <td>
-              <!-- Edit link that takes you to the appropriate urls_show page -->
-              <a href="/urls/<%= id %>">Edit</a>
-
-              <!-- Form for deleting the URL -->
-              <form method="POST" action="/urls/<%= id %>/delete" style="display: inline;">
-                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-              </form>
-            </td>
-          </tr>
-        <% } %>
-      </tbody>
-    </table>
+    <h3>Register</h3>
+    <form method="POST" action="/register" class="form-inline">
+      <div class="form-group mx-sm-2">
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" name="email" id="email" required>
+      </div>
+      <div class="form-group mx-sm-2">
+        <label for="password">Password:</label>
+        <input type="password" class="form-control" name="password" id="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
   </main>
 
   <!-- Bootstrap JS -->
