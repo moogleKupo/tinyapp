@@ -1,7 +1,8 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 
 function generateRandomString() {
   let result = "";
@@ -13,13 +14,31 @@ function generateRandomString() {
   return result;
 }
 
+function getUserByEmail(email, users) {
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+}
+
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const users = {};
+const users = {
+  // Sample users data (Replace with your actual data)
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "$2b$10$zKc/W5PLZUxXaOoKIIK8KO6cPbiG01Wn7FGT4Z0J0lcIWX6DyAotO" // bcrypt hash of "password"
+  }
+};
 
 const urlDatabase = {
+  // Sample URLs data (Replace with your actual data)
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
   "9sm5xK": { longURL: "http://www.google.com", userID: "user2RandomID" }
 };
@@ -80,12 +99,24 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400).send("Email and password cannot be empty.");
+    return;
+  }
+
+  const existingUser = getUserByEmail(email, users);
+  if (existingUser) {
+    res.status(400).send("Email already registered.");
+    return;
+  }
+
   const userId = generateRandomString();
 
   const newUser = {
     id: userId,
     email,
-    password
+    password: bcrypt.hashSync(password, 10)
   };
 
   users[userId] = newUser;
@@ -104,23 +135,34 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const user = getUserByEmail(email, users);
 
-  if (user && bcrypt.compareSync(password, user.password)) {
-    res.cookie("user_id", user.id);
-    res.redirect("/urls");
-  } else {
-    res.status(403).send("Invalid credentials");
+  if (!user) {
+    res.status(403).send("User not found");
+    return;
   }
+
+  if (!bcrypt.compareSync(password, user.password)) {
+    res.status(403).send("Invalid password");
+    return;
+  }
+
+  res.cookie("user_id", user.id);
+  res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
+});
+
+app.get("/login", (req, res) => {
+  // Pass an empty user object when rendering the login template
+  res.render("login", { user: {} });
 });
 
 app.listen(PORT, () => {
