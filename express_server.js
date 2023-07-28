@@ -210,23 +210,33 @@ app.post("/login", (req, res) => {
   const user = getUserByEmail(email, users);
 
   if (!user) {
-    res.status(403).send("User not found.");
+    // If user not found, show an error message on the login page
+    res.status(403).render("login", { errorMessage: "User not found.", user: null });
     return;
   }
 
   if (!bcrypt.compareSync(password, user.password)) {
-    res.status(403).send("Invalid password.");
+    // If the password is incorrect, show an error message on the login page
+    res.status(403).render("login", { errorMessage: "Invalid password.", user: null });
     return;
   }
 
-  res.cookie("user_id", user.id);
+  // If the credentials are correct, set the user_id in the session and redirect to /urls
+  req.session.user_id = user.id;
   res.redirect("/urls");
 });
+
 
 // Logout
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/urls");
+});
+
+app.post("/logout", (req, res) => {
+  // Clear the user_id session cookie to log the user out
+  req.session.user_id = null;
+  res.redirect("/login");
 });
 
 // Error page

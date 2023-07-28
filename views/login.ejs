@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <!-- Add your head elements like title, meta tags, stylesheets, etc. here -->
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
+    <title>Login - TinyApp</title>
+  </head>
 <body>
   <!-- Include the header using the _header.ejs partial -->
-  <%- include('partials/_header.ejs') %>
-
-  <!-- Your login form -->
+  <%- include('partials/_header') %>
+<h1>Login</h1>
+  <!-- Login Form -->
   <form method="POST" action="/login" class="form-inline">
     <div class="form-group mx-sm-2">
       <label for="email">Email:</label>
@@ -19,8 +23,5 @@
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
   </form>
-
-  <!-- Your JavaScript and other scripts go here -->
-
 </body>
 </html>
