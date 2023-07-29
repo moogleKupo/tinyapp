@@ -239,6 +239,12 @@ app.post("/logout", (req, res) => {
   res.redirect("/login");
 });
 
+app.post("/logout", (req, res) => {
+  // Clear the user_id session cookie to log the user out
+  req.session.user_id = null;
+  res.redirect("/login");
+});
+
 // Error page
 app.get("/urls/error", (req, res) => {
   res.render("urls_error");
